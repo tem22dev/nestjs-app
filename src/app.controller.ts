@@ -9,5 +9,9 @@ export class AppController {
     @Render('home')
     getHello() {
         // return this.appService.getHello();
+        const messageText = this.appService.getHello();
+        return {
+            message: messageText,
+        };
     }
 }
