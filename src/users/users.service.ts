@@ -30,8 +30,8 @@ export class UsersService {
         return user;
     }
 
-    findAll() {
-        return `This action returns all users`;
+    async findAll() {
+        return await this.userModel.find({});
     }
 
     async findOne(id: string) {
