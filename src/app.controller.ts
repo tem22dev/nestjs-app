@@ -1,6 +1,8 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Post, Render, Request, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './auth/local-auth.guard';
 
 @Controller()
 export class AppController {
@@ -19,5 +21,12 @@ export class AppController {
         return {
             message: messageText,
         };
+    }
+
+    @Post('login')
+    // @UseGuards(AuthGuard('local'))
+    @UseGuards(LocalAuthGuard)
+    handleLogin(@Request() req) {
+        return req.user;
     }
 }
