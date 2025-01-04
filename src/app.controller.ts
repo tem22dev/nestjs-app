@@ -5,6 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { Public } from './decorator/customize';
 
 @Controller()
 export class AppController {
@@ -26,6 +27,7 @@ export class AppController {
         };
     }
 
+    @Public()
     @Post('login')
     // @UseGuards(AuthGuard('local'))
     @UseGuards(LocalAuthGuard)
@@ -37,11 +39,6 @@ export class AppController {
     // @UseGuards(JwtAuthGuard)
     @Get('profile')
     getProfile(@Request() req) {
-        return req.user;
-    }
-
-    @Get('profile2')
-    getProfile2(@Request() req) {
         return req.user;
     }
 }
