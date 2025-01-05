@@ -19,6 +19,11 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
     console.log(join(__dirname, '..', 'public'));
 
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        preflightContinue: false,
+    });
     await app.listen(configService.get<string>('PORT') ?? 3000);
 }
 bootstrap();
