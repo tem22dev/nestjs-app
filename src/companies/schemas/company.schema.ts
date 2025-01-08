@@ -9,27 +9,24 @@ export class Company {
     name: string;
 
     @Prop()
-    address: number;
-
-    @Prop()
-    phone: number;
+    address: string;
 
     @Prop()
     description: string;
 
-    @Prop({type: Object})
+    @Prop({ type: Object })
     createdBy: {
         _id: mongoose.Types.ObjectId;
         email: string;
     };
 
-    @Prop({type: Object})
+    @Prop({ type: Object })
     updatedBy: {
         _id: mongoose.Types.ObjectId;
         email: string;
     };
 
-    @Prop({type: Object})
+    @Prop({ type: Object })
     deletedBy: {
         _id: mongoose.Types.ObjectId;
         email: string;
