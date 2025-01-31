@@ -7,3 +7,6 @@ export const User = createParamDecorator((_data: unknown, ctx: ExecutionContext)
     const request = ctx.switchToHttp().getRequest();
     return request.user;
 });
+
+export const RESPONSE_MESSAGE = 'message';
+export const ResponseMessage = (message: string) => SetMetadata(RESPONSE_MESSAGE, message);
