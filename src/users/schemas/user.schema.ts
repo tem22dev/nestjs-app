@@ -21,9 +21,6 @@ export class User {
     gender: string;
 
     @Prop()
-    phone: number;
-
-    @Prop()
     address: string;
 
     @Prop({ type: Object })

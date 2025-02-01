@@ -20,8 +20,8 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
                 statusCode: context.switchToHttp().getResponse().statusCode,
                 message: this.reflector.get<string>(RESPONSE_MESSAGE, context.getHandler()) || '',
                 data: {
-                    result: data,
-                    meta: {}, // if this is supposed to be the actual return then replace {} with data.result
+                    result: data.result ?? data,
+                    meta: data.meta, // if this is supposed to be the actual return then replace {} with data.result
                 },
             })),
         );
