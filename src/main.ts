@@ -24,9 +24,10 @@ async function bootstrap() {
     console.log(join(__dirname, '..', 'public'));
 
     app.enableCors({
-        origin: '*',
+        origin: true,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         preflightContinue: false,
+        credentials: true,
     });
 
     // Set config for versioning
