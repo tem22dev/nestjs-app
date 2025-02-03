@@ -39,6 +39,12 @@ export class CreateJobDto {
     @IsNotEmpty({ message: 'Level không được bỏ trống' })
     level: string;
 
+    @IsNotEmpty({ message: 'Location không được bỏ trống' })
+    location: string;
+
+    @IsNotEmpty({ message: 'Logo không được bỏ trống' })
+    logo: string;
+
     @IsNotEmpty({ message: 'StartDate không được bỏ trống' })
     @Transform(({ value }) => new Date(value))
     @IsDate({ message: 'StartDate có định dạng là Date' })
