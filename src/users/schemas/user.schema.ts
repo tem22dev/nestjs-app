@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Company } from 'src/companies/schemas/company.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -23,7 +24,7 @@ export class User {
     @Prop()
     address: string;
 
-    @Prop({ type: Object })
+    @Prop({ type: Object, ref: Company.name })
     company: {
         _id: mongoose.Schema.Types.ObjectId;
         email: string;

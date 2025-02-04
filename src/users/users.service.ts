@@ -63,7 +63,7 @@ export class UsersService {
     }
 
     async findAll(currentPage: number, limit: number, qs: string) {
-        const { filter, sort, population } = aqp(qs);
+        const { filter, sort, population, projection } = aqp(qs);
 
         delete filter.page;
         delete filter.limit;
@@ -79,7 +79,7 @@ export class UsersService {
             .skip(offset)
             .limit(defaultLimit)
             .sort(sort as any)
-            .select('-password')
+            .select({ ...projection, password: 0 })
             .populate(population)
             .exec();
 

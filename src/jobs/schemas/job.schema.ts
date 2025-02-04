@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Company } from 'src/companies/schemas/company.schema';
 
 export type JobDocument = HydratedDocument<Job>;
 
@@ -11,7 +12,7 @@ export class Job {
     @Prop()
     skills: string[];
 
-    @Prop({ type: Object })
+    @Prop({ type: Object, ref: Company.name })
     company: {
         _id: mongoose.Schema.Types.ObjectId;
         name: string;
