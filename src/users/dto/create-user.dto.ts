@@ -1,7 +1,7 @@
 // Data transfer object
 
 import { Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNotEmptyObject, IsObject, IsString, ValidateNested } from 'class-validator';
+import { IsEmail, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsObject, IsString, ValidateNested } from 'class-validator';
 import mongoose from 'mongoose';
 
 class Company {
@@ -9,7 +9,7 @@ class Company {
     _id: mongoose.Schema.Types.ObjectId;
 
     @IsNotEmpty()
-    name: string
+    name: string;
 }
 
 export class CreateUserDto {
@@ -25,16 +25,17 @@ export class CreateUserDto {
 
     @IsNotEmpty({ message: 'Address không được bỏ trống' })
     address: string;
-    
+
     @IsNotEmpty({ message: 'Age không được bỏ trống' })
     age: number;
-    
+
     @IsNotEmpty({ message: 'Gender không được bỏ trống' })
     gender: number;
 
     @IsNotEmpty({ message: 'Role không được bỏ trống' })
-    role: string;
-    
+    @IsMongoId()
+    role: mongoose.Schema.Types.ObjectId;
+
     @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
@@ -55,10 +56,10 @@ export class RegisterUserDto {
 
     @IsNotEmpty({ message: 'Address không được bỏ trống' })
     address: string;
-    
+
     @IsNotEmpty({ message: 'Age không được bỏ trống' })
     age: number;
-    
+
     @IsNotEmpty({ message: 'Gender không được bỏ trống' })
     gender: number;
 }

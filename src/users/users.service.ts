@@ -8,10 +8,14 @@ import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './users.interface';
 import aqp from 'api-query-params';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>) {}
+    constructor(
+        private configService: ConfigService,
+        @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+    ) {}
 
     getHashPassword = (password: string) => {
         const salt = genSaltSync(10);
@@ -101,14 +105,19 @@ export class UsersService {
         // return result;
 
         // Cách 2
-        const user = await this.userModel.findOne({ _id: id }).select('-password');
+        const user = await this.userModel
+            .findOne({ _id: id })
+            .select('-password')
+            .populate({ path: 'role', select: { name: 1 } });
         return user;
     }
 
     async findOneUsername(username: string) {
-        return this.userModel.findOne({
-            email: username,
-        });
+        return this.userModel
+            .findOne({
+                email: username,
+            })
+            .populate({ path: 'role', select: { name: 1, permission: 1 } });
     }
 
     async update(updateUserDto: UpdateUserDto, user: IUser) {
@@ -129,6 +138,12 @@ export class UsersService {
     }
 
     async remove(id: string, user: IUser) {
+        const foundUser: IUser = await this.userModel.findById(id);
+
+        if (foundUser.email === this.configService.get<string>('EMAIL_ADMIN')) {
+            throw new BadRequestException('Not remove account admin');
+        }
+
         await this.userModel.updateOne(
             { _id: id },
             {

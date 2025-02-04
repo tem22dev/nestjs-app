@@ -7,10 +7,14 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { IUser } from 'src/users/users.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RolesService {
-    constructor(@InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>) {}
+    constructor(
+        @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
+        private configService: ConfigService,
+    ) {}
 
     async create(createRoleDto: CreateRoleDto, user: IUser) {
         const isExistName = await this.roleModel.findOne({ name: createRoleDto.name });
@@ -100,6 +104,12 @@ export class RolesService {
     async remove(id: string, user: IUser) {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new BadRequestException('id is not valid');
+        }
+
+        const foundRole = await this.roleModel.findById(id);
+
+        if (foundRole.name === this.configService.get<string>('ROLE_ADMIN')) {
+            throw new BadRequestException('Not remove role admin');
         }
 
         await this.roleModel.updateOne(
