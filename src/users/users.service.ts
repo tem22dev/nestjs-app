@@ -9,12 +9,16 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from './users.interface';
 import aqp from 'api-query-params';
 import { ConfigService } from '@nestjs/config';
+import { Role, RoleDocument } from 'src/roles/schemas/role.schema';
+import { USER_ROLE } from 'src/databases/sample';
 
 @Injectable()
 export class UsersService {
     constructor(
         private configService: ConfigService,
         @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+
+        @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
     ) {}
 
     getHashPassword = (password: string) => {
@@ -51,15 +55,17 @@ export class UsersService {
     }
 
     async register(info: RegisterUserDto) {
-        const hashPass = this.getHashPassword(info.password);
         const isExist = await this.userModel.findOne({ email: info.email });
         if (isExist) {
             throw new BadRequestException('Email already exists');
         }
 
+        const userRole = await this.roleModel.findOne({ name: USER_ROLE });
+        const hashPass = this.getHashPassword(info.password);
+
         const user = await this.userModel.create({
             ...info,
-            role: 'USER',
+            role: userRole,
             password: hashPass,
         });
 
@@ -117,7 +123,7 @@ export class UsersService {
             .findOne({
                 email: username,
             })
-            .populate({ path: 'role', select: { name: 1, permission: 1 } });
+            .populate({ path: 'role', select: { name: 1 } });
     }
 
     async update(updateUserDto: UpdateUserDto, user: IUser) {
@@ -162,6 +168,6 @@ export class UsersService {
     };
 
     findUserByToken = async (refreshToken: string) => {
-        return await this.userModel.findOne({ refreshToken });
+        return await this.userModel.findOne({ refreshToken }).populate({ path: 'role', select: { name: 1 } });
     };
 }

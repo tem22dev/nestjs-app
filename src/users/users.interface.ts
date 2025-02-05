@@ -2,7 +2,6 @@ export interface IUser {
     _id: string;
     name: string;
     email: string;
-    role: string;
     password: string;
     address: string;
     age: number;
@@ -11,4 +10,14 @@ export interface IUser {
         _id: string;
         name: string;
     };
+    role: {
+        _id: string;
+        name: string;
+    };
+    permissions?: {
+        _id: string;
+        name: string;
+        apiPath: string;
+        module: string;
+    }[];
 }
