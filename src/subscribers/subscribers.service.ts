@@ -1,29 +1,25 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreatePermissionDto } from './dto/create-permission.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { Permission, PermissionDocument } from './schemas/permission.schema';
-import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { CreateSubscriberDto } from './dto/create-subscriber.dto';
+import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import { Subscriber, SubscriberDocument } from './schemas/subscriber.schema';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 
 @Injectable()
-export class PermissionsService {
-    constructor(@InjectModel(Permission.name) private permissionModel: SoftDeleteModel<PermissionDocument>) {}
+export class SubscribersService {
+    constructor(@InjectModel(Subscriber.name) private subscriberModel: SoftDeleteModel<SubscriberDocument>) {}
 
-    async create(createPermissionDto: CreatePermissionDto, user: IUser) {
-        const isExistApiPathAndMethod = await this.permissionModel.findOne({
-            apiPath: createPermissionDto.apiPath,
-            method: createPermissionDto.method,
-        });
-
-        if (isExistApiPathAndMethod) {
-            throw new BadRequestException('apiPath and method already exists');
+    async create(createSubscriberDto: CreateSubscriberDto, user: IUser) {
+        const isExist = await this.subscriberModel.findOne({ email: createSubscriberDto.email });
+        if (isExist) {
+            throw new BadRequestException('Email already exists');
         }
 
-        const permission = await this.permissionModel.create({
-            ...createPermissionDto,
+        const subscriber = await this.subscriberModel.create({
+            ...createSubscriberDto,
             createdBy: {
                 _id: user._id,
                 email: user.email,
@@ -31,8 +27,10 @@ export class PermissionsService {
         });
 
         return {
-            _id: permission._id,
-            createdAt: permission.createdAt,
+            result: {
+                _id: subscriber._id,
+                createdAt: subscriber.createdAt,
+            },
         };
     }
 
@@ -45,10 +43,10 @@ export class PermissionsService {
         let offset = (+currentPage - 1) * +limit;
         let defaultLimit = +limit ? +limit : 10;
 
-        const totalItems = (await this.permissionModel.find(filter)).length;
+        const totalItems = (await this.subscriberModel.find(filter)).length;
         const totalPages = Math.ceil(totalItems / defaultLimit);
 
-        const result = await this.permissionModel
+        const result = await this.subscriberModel
             .find(filter)
             .skip(offset)
             .limit(defaultLimit)
@@ -69,21 +67,21 @@ export class PermissionsService {
 
     async findOne(id: string) {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new BadRequestException('id is not valid');
+            throw new BadRequestException('id not valid');
         }
 
-        return await this.permissionModel.findOne({ _id: id });
+        const subscriber = await this.subscriberModel.findOne({ _id: id });
+        return subscriber;
     }
 
-    async update(id: string, updatePermissionDto: UpdatePermissionDto, user: IUser) {
+    async update(id: string, updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new BadRequestException('id is not valid');
+            throw new BadRequestException('id not valid');
         }
-
-        const permissionUpdate = await this.permissionModel.updateOne(
+        const subscriberUpdate = await this.subscriberModel.updateOne(
             { _id: id },
             {
-                ...updatePermissionDto,
+                ...updateSubscriberDto,
                 updatedBy: {
                     _id: user._id,
                     email: user.email,
@@ -92,16 +90,16 @@ export class PermissionsService {
         );
 
         return {
-            result: permissionUpdate,
+            result: subscriberUpdate,
         };
     }
 
     async remove(id: string, user: IUser) {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new BadRequestException('id is not valid');
+            throw new BadRequestException('id not valid');
         }
 
-        await this.permissionModel.updateOne(
+        await this.subscriberModel.updateOne(
             { _id: id },
             {
                 deletedBy: {
@@ -111,6 +109,6 @@ export class PermissionsService {
             },
         );
 
-        return await this.permissionModel.softDelete({ _id: id });
+        return await this.subscriberModel.softDelete({ _id: id });
     }
 }
