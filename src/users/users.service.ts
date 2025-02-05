@@ -146,7 +146,7 @@ export class UsersService {
     async remove(id: string, user: IUser) {
         const foundUser: IUser = await this.userModel.findById(id);
 
-        if (foundUser.email === this.configService.get<string>('EMAIL_ADMIN')) {
+        if (foundUser && foundUser.email === this.configService.get<string>('EMAIL_ADMIN')) {
             throw new BadRequestException('Not remove account admin');
         }
 
