@@ -1,5 +1,6 @@
 // Data transfer object
 
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsEmail, IsMongoId, IsNotEmpty, IsNotEmptyObject, IsObject, IsString, ValidateNested } from 'class-validator';
 import mongoose from 'mongoose';
@@ -41,6 +42,21 @@ export class CreateUserDto {
     @ValidateNested()
     @Type(() => Company)
     company: Company;
+}
+
+export class UserLoginDto {
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({ example: 'admin@gmail.com', description: 'username' })
+    readonly username: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        example: '999999',
+        description: 'password',
+    })
+    readonly password: string;
 }
 
 export class RegisterUserDto {

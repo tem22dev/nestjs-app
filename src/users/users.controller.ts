@@ -5,6 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from './users.interface';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
