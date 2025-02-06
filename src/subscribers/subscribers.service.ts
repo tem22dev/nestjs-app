@@ -74,12 +74,9 @@ export class SubscribersService {
         return subscriber;
     }
 
-    async update(id: string, updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new BadRequestException('id not valid');
-        }
+    async update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
         const subscriberUpdate = await this.subscriberModel.updateOne(
-            { _id: id },
+            { email: user.email },
             {
                 ...updateSubscriberDto,
                 updatedBy: {
@@ -87,6 +84,7 @@ export class SubscribersService {
                     email: user.email,
                 },
             },
+            { upsert: true },
         );
 
         return {
@@ -110,5 +108,10 @@ export class SubscribersService {
         );
 
         return await this.subscriberModel.softDelete({ _id: id });
+    }
+
+    async getSkills(user: IUser) {
+        const { email } = user;
+        return await this.subscriberModel.findOne({ email }, { skills: 1 });
     }
 }
