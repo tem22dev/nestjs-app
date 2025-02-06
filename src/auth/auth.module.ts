@@ -20,7 +20,7 @@ import { RolesModule } from 'src/roles/roles.module';
             useFactory: async (configService: ConfigService) => ({
                 secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
                 signOptions: {
-                    expiresIn: ms(configService.get<string>('JWT_ACCESS_EXPIRATION')) / 1000,
+                    expiresIn: ms(configService.get<string>('JWT_ACCESS_EXPIRATION') as ms.StringValue) / 1000,
                 },
             }),
             inject: [ConfigService],

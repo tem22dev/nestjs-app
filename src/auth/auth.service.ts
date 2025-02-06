@@ -54,7 +54,7 @@ export class AuthService {
 
         response.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRATION')),
+            maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRATION') as ms.StringValue),
         });
 
         return {
@@ -81,7 +81,7 @@ export class AuthService {
     createRefreshToken = (payload: any) => {
         const refreshToken = this.jwtService.sign(payload, {
             secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-            expiresIn: ms(this.configService.get<string>('JWT_REFRESH_EXPIRATION')) / 1000,
+            expiresIn: ms(this.configService.get<string>('JWT_REFRESH_EXPIRATION') as ms.StringValue) / 1000,
         });
 
         return refreshToken;
@@ -117,7 +117,7 @@ export class AuthService {
 
             response.cookie('refreshToken', newRefreshToken, {
                 httpOnly: true,
-                maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRATION')),
+                maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRATION') as ms.StringValue),
             });
 
             return {
