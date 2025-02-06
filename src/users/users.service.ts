@@ -126,9 +126,13 @@ export class UsersService {
             .populate({ path: 'role', select: { name: 1 } });
     }
 
-    async update(updateUserDto: UpdateUserDto, user: IUser) {
+    async update(id: string, updateUserDto: UpdateUserDto, user: IUser) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new BadRequestException('id not valid');
+        }
+
         const userUpdate = await this.userModel.updateOne(
-            { _id: updateUserDto._id },
+            { _id: id },
             {
                 ...updateUserDto,
                 updatedBy: {
